@@ -32,7 +32,7 @@ func main() {
                 if err != nil {
                         log.Fatal(err)
                 }
-                cc := record.Country.IsoCode
+                //cc := record.Country.IsoCode
                 fmt.Printf("%s %s ", record.Country.IsoCode , word)
             }else{
                 fmt.Printf("%s ",word)
