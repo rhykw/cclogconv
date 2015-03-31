@@ -20,22 +20,22 @@ func main() {
     defer db.Close()
     // If you are using strings that may be invalid, check that ip is not nil
 
+    re, _ := regexp.Compile("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")
+
     var sc = bufio.NewScanner(os.Stdin)
-    c := 1
     for sc.Scan() {
         words := strings.Fields( sc.Text() )
-        c += 1
-        for _, v := range words {
-            isIp , _ := regexp.MatchString("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$",v)
-            if isIp {
-                ip := net.ParseIP( v )
+        for _, word := range words {
+            if re.MatchString(word) {
+                ip := net.ParseIP( word )
                 record, err := db.City(ip)
                 if err != nil {
                         log.Fatal(err)
                 }
-                fmt.Printf("%s %v ", record.Country.IsoCode , v)
+                cc := record.Country.IsoCode
+                fmt.Printf("%s %s ", record.Country.IsoCode , word)
             }else{
-                fmt.Printf("%s ",v)
+                fmt.Printf("%s ",word)
             }
         }
         fmt.Printf("\n")
