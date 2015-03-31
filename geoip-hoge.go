@@ -32,8 +32,11 @@ func main() {
                 if err != nil {
                         log.Fatal(err)
                 }
-                //cc := record.Country.IsoCode
-                fmt.Printf("%s %s ", record.Country.IsoCode , word)
+                cc := record.Country.IsoCode
+                if cc == "" {
+                    cc = "-"
+                }
+                fmt.Printf("%s %s ", cc , word)
             }else{
                 fmt.Printf("%s ",word)
             }
