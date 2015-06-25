@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "flag"
     "github.com/oschwald/geoip2-golang"
     "log"
     "net"
@@ -13,7 +14,13 @@ import (
 
 func main() {
 
-    db, err := geoip2.Open("./GeoLite2-Country.mmdb")
+    var (
+        optMmdbFilePath = flag.String("data", "/usr/share/GeoIP/GeoLite2-Country.mmdb", "GeoIP2 Database Filename")
+    )
+    flag.Parse()
+    var mmdbFilePath = fmt.Sprintf("%s", *optMmdbFilePath)
+
+    db, err := geoip2.Open( mmdbFilePath )
     if err != nil {
             log.Fatal(err)
     }
