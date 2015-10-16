@@ -16,9 +16,11 @@ func main() {
 
     var (
         optMmdbFilePath = flag.String("data", "/usr/share/GeoIP/GeoLite2-Country.mmdb", "GeoIP2 Database Filename")
+        selectCc        = flag.String("cc"  , "", "Only displays line including this country's ip")
     )
     flag.Parse()
     var mmdbFilePath = fmt.Sprintf("%s", *optMmdbFilePath)
+    var lineBuf = ""
 
     db, err := geoip2.Open( mmdbFilePath )
     if err != nil {
@@ -31,6 +33,8 @@ func main() {
 
     var sc = bufio.NewScanner(os.Stdin)
     for sc.Scan() {
+        var ccMatchFlag = false
+        lineBuf = ""
         words := strings.Fields( sc.Text() )
         for _, word := range words {
             if re.MatchString(word) {
@@ -40,15 +44,22 @@ func main() {
                         log.Fatal(err)
                 }
                 cc := record.Country.IsoCode
+                if ccMatchFlag || cc == *selectCc {
+                    ccMatchFlag = true
+                }
                 if cc == "" {
                     cc = "-"
                 }
-                fmt.Printf("%s %s ", cc , word)
+                lineBuf = fmt.Sprintf("%s %s ", cc , word)
             }else{
-                fmt.Printf("%s ",word)
+                lineBuf = fmt.Sprintf("%s ",word)
             }
         }
-        fmt.Printf("\n")
+
+        if *selectCc == "" || ccMatchFlag {
+            fmt.Printf(lineBuf + "\n")
+        }
+        lineBuf = ""
     }
     if err := sc.Err(); err != nil {
         fmt.Fprintln(os.Stderr, "reading standard input:", err)
