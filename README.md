@@ -17,3 +17,11 @@ xxx yyyy US 173.194.126.134 zzz
 
 ```
 
+```
+
+# echo -e "aaaa bbbb 183.79.71.173 ccc\nxxxx yyyy 173.194.126.134 zzz\n" | cclogconv --data /usr/share/GeoIP/GeoLite2-Country.mmdb --cc=US
+
+xxx yyyy US 173.194.126.134 zzz
+
+```
+
