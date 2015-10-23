@@ -17,10 +17,26 @@ func main() {
     var (
         optMmdbFilePath = flag.String("data", "/usr/share/GeoIP/GeoLite2-Country.mmdb", "GeoIP2 Database Filename")
         selectCc        = flag.String("cc"  , "", "Only displays line including this country's ip")
+        nFlag           = flag.Bool("n"  , false , "Not adding country code")
+        vFlag           = flag.Bool("v"  , false , "Reverse condition for cc option")
     )
     flag.Parse()
     var mmdbFilePath = fmt.Sprintf("%s", *optMmdbFilePath)
     var lineBuf = ""
+
+    if *selectCc == "" {
+        if *nFlag {
+            fmt.Fprintln(os.Stderr, "n option must be used with cc option.")
+        }
+        if *vFlag {
+            fmt.Fprintln(os.Stderr, "v option must be used with cc option.")
+        }
+        if ( *nFlag || *vFlag ){
+            os.Exit(1)
+        }
+    }
+
+
 
     db, err := geoip2.Open( mmdbFilePath )
     if err != nil {
@@ -50,13 +66,16 @@ func main() {
                 if cc == "" {
                     cc = "-"
                 }
-                lineBuf = fmt.Sprintf("%s %s ", cc , word)
+                if *nFlag == false {
+                    lineBuf = fmt.Sprintf("%s ", cc)
+                }
+                lineBuf = lineBuf + fmt.Sprintf("%s ", word)
             }else{
                 lineBuf = fmt.Sprintf("%s ",word)
             }
         }
 
-        if *selectCc == "" || ccMatchFlag {
+        if ((*selectCc == "" || ccMatchFlag) && !*vFlag) || ( !(*selectCc == "" || ccMatchFlag) && *vFlag) {
             fmt.Printf(lineBuf + "\n")
         }
         lineBuf = ""
