@@ -67,11 +67,11 @@ func main() {
                     cc = "-"
                 }
                 if *nFlag == false {
-                    lineBuf = fmt.Sprintf("%s ", cc)
+                    lineBuf += fmt.Sprintf("%s ", cc)
                 }
                 lineBuf = lineBuf + fmt.Sprintf("%s ", word)
             }else{
-                lineBuf = fmt.Sprintf("%s ",word)
+                lineBuf += fmt.Sprintf("%s ",word)
             }
         }
 
