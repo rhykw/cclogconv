@@ -15,7 +15,7 @@ import (
 func main() {
 
 	var (
-		optMmdbFilePath = flag.String("data", "/usr/share/GeoIP/GeoLite2-Country.mmdb", "GeoIP2 Database Filename")
+		optMmdbFilePath = flag.String("data", "/usr/share/GeoIP2/GeoLite2-Country.mmdb", "GeoIP2 Database Filename")
 		selectCc        = flag.String("cc", "", "Only displays line including this country's ip")
 		nFlag           = flag.Bool("n", false, "Not adding country code")
 		vFlag           = flag.Bool("v", false, "Reverse condition for cc option")
