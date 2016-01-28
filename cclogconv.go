@@ -74,7 +74,7 @@ func main() {
 		}
 
 		if ((*selectCc == "" || ccMatchFlag) && !*vFlag) || (!(*selectCc == "" || ccMatchFlag) && *vFlag) {
-			fmt.Printf(lineBuf + "\n")
+			fmt.Println(lineBuf)
 		}
 		lineBuf = ""
 	}
