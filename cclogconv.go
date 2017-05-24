@@ -43,7 +43,7 @@ func main() {
 	defer db.Close()
 	// If you are using strings that may be invalid, check that ip is not nil
 
-	re, _ := regexp.Compile("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")
+	re, _ := regexp.Compile("^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
 
 	var sc = bufio.NewScanner(os.Stdin)
 	for sc.Scan() {
