@@ -43,7 +43,7 @@ func main() {
 	defer db.Close()
 	// If you are using strings that may be invalid, check that ip is not nil
 
-	re, _ := regexp.Compile("^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
+	re, _ := regexp.Compile("^(.*[^0-9a-z\\.\\-_]|)((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$")
 
 	var sc = bufio.NewScanner(os.Stdin)
 	for sc.Scan() {
@@ -51,8 +51,9 @@ func main() {
 		lineBuf = ""
 		words := strings.Fields(sc.Text())
 		for _, word := range words {
-			if re.MatchString(word) {
-				ip := net.ParseIP(word)
+			m := re.FindStringSubmatch(word)
+			if len(m) > 2 {
+				ip := net.ParseIP(m[2])
 				record, err := db.City(ip)
 				if err != nil {
 					log.Fatal(err)
@@ -65,7 +66,11 @@ func main() {
 					cc = "-"
 				}
 				if *nFlag == false {
-					lineBuf += fmt.Sprintf("%s ", cc)
+					if m[1] == "" {
+						lineBuf += fmt.Sprintf("%s ", cc)
+					} else {
+						lineBuf += fmt.Sprintf("CC%s%s ", m[1], cc)
+					}
 				}
 				lineBuf = lineBuf + fmt.Sprintf("%s ", word)
 			} else {
