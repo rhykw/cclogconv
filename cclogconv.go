@@ -79,7 +79,7 @@ func main() {
 					if m[1] == "" {
 						lineBuf += fmt.Sprintf("%s%s", cc, oSep)
 					} else {
-						lineBuf += fmt.Sprintf("CC%s%s ", m[1], cc)
+						lineBuf += fmt.Sprintf("CC%s%s%s", m[1], cc, oSep)
 					}
 				}
 				lineBuf = lineBuf + fmt.Sprintf("%s%s", word, oSep)
