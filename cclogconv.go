@@ -19,10 +19,12 @@ func main() {
 		selectCc        = flag.String("cc", "", "Only displays line including this country's ip")
 		nFlag           = flag.Bool("n", false, "Not adding country code")
 		vFlag           = flag.Bool("v", false, "Reverse condition for cc option")
+		tFlag           = flag.Bool("t", false, "for LTSV format")
 	)
 	flag.Parse()
 	var mmdbFilePath = fmt.Sprintf("%s", *optMmdbFilePath)
 	var lineBuf = ""
+	var oSep = " "
 
 	if *selectCc == "" {
 		if *nFlag {
@@ -45,11 +47,19 @@ func main() {
 
 	re, _ := regexp.Compile("^(.*[^0-9a-z\\.\\-_]|)((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$")
 
+	if *tFlag {
+		oSep = "\t"
+	}
 	var sc = bufio.NewScanner(os.Stdin)
 	for sc.Scan() {
 		var ccMatchFlag = false
 		lineBuf = ""
-		words := strings.Fields(sc.Text())
+		var words []string
+		if *tFlag {
+			words = strings.Split(sc.Text(), "\t")
+		} else {
+			words = strings.Fields(sc.Text())
+		}
 		for _, word := range words {
 			m := re.FindStringSubmatch(word)
 			if len(m) > 2 {
@@ -67,14 +77,14 @@ func main() {
 				}
 				if *nFlag == false {
 					if m[1] == "" {
-						lineBuf += fmt.Sprintf("%s ", cc)
+						lineBuf += fmt.Sprintf("%s%s", cc, oSep)
 					} else {
 						lineBuf += fmt.Sprintf("CC%s%s ", m[1], cc)
 					}
 				}
-				lineBuf = lineBuf + fmt.Sprintf("%s ", word)
+				lineBuf = lineBuf + fmt.Sprintf("%s%s", word, oSep)
 			} else {
-				lineBuf += fmt.Sprintf("%s ", word)
+				lineBuf += fmt.Sprintf("%s%s", word, oSep)
 			}
 		}
 
