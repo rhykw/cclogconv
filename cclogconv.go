@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/oschwald/geoip2-golang"
 	"io"
-	"log"
 	"net"
 	"os"
 	"regexp"
@@ -71,7 +70,9 @@ func (cl CCLogConv) Run(args []string) int {
 		out: cl.Out,
 	}
 
-	filter.start(mmdbFilePath, selectCC, notAdd, reverseCond)
+	if err := filter.start(mmdbFilePath, selectCC, notAdd, reverseCond); err != nil {
+		fmt.Fprintf(cl.Err, "%s\n", err)
+	}
 
 	return ExitCodeOK
 }
@@ -87,7 +88,7 @@ func (f filter) start(mmdbFilePath string, selectCc string, nFlag bool, vFlag bo
 
 	db, err := geoip2.Open(mmdbFilePath)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer db.Close()
 	// If you are using strings that may be invalid, check that ip is not nil
@@ -104,7 +105,7 @@ func (f filter) start(mmdbFilePath string, selectCc string, nFlag bool, vFlag bo
 				ip := net.ParseIP(word)
 				record, err := db.City(ip)
 				if err != nil {
-					log.Fatal(err)
+					return err
 				}
 				cc := record.Country.IsoCode
 				if ccMatchFlag || cc == selectCc {
