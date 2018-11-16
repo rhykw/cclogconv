@@ -18,6 +18,7 @@ build: ## Build as linux binary
 	$(GO) build -o cclogconv cmd/cclogconv/main.go
 
 test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb: ## test data
+	mkdir -p test/tmp
 	tar -C test/tmp -zxf test/GeoLite2-Country_20181113.tar.gz
 
 test: test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb ## Run test
