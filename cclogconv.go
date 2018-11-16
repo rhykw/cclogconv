@@ -124,7 +124,7 @@ func (f filter) start(mmdbFilePath string, selectCc string, nFlag bool, vFlag bo
 		}
 
 		if ((selectCc == "" || ccMatchFlag) && !vFlag) || (!(selectCc == "" || ccMatchFlag) && vFlag) {
-			fmt.Println(lineBuf)
+			fmt.Fprintln(f.out, strings.TrimRight(lineBuf, " "))
 		}
 		lineBuf = ""
 	}
