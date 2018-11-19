@@ -21,7 +21,11 @@ test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb: ## test data
 	mkdir -p test/tmp
 	tar -C test/tmp -zxf test/GeoLite2-Country_20181113.tar.gz
 
-test: test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb ## Run test
+test/tmp/test.log:
+	mkdir -p test/tmp
+	tar -C test/tmp -zxf test/test_log.tar.gz
+
+test: test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb test/tmp/test.log ## Run test
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Testing$(RESET)"
 	$(GO) test -cover -v $(TEST) -timeout=30s -parallel=4
 	$(GO) test $(TEST)
@@ -35,7 +39,8 @@ lint: ## Exec golint
 	golint -set_exit_status $(TEST)
 
 clean:
-	-rm cclogconv
+	-rm -f cclogconv
+	-rm -rf test/tmp
 
 .PHONY: default test
 

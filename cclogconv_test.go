@@ -2,6 +2,8 @@ package cclogconv
 
 import (
 	"bytes"
+	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
 )
@@ -148,6 +150,26 @@ func TestRun_filter_with_ccOpt_nFlag_vFlag(t *testing.T) {
 	}
 
 	expected := []byte("boo moo 98.138.219.231 ccc def\n")
+	if bytes.Compare(expected, out.Bytes()) != 0 {
+		t.Errorf("expected \n%#v to eq \n%#v", out.Bytes(), expected)
+	}
+}
+
+func TestRun_filter_manyLines(t *testing.T) {
+	out := new(bytes.Buffer)
+	in, _ := os.Open("test/tmp/test.log")
+
+	filter := filter{
+		in:  in,
+		out: out,
+	}
+
+	err := filter.start("test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb", "JP", false, false)
+	if err != nil {
+		t.Errorf("expected %v to eq nil", err)
+	}
+
+	expected, _ := ioutil.ReadFile("test/tmp/expected_JP.txt")
 	if bytes.Compare(expected, out.Bytes()) != 0 {
 		t.Errorf("expected \n%#v to eq \n%#v", out.Bytes(), expected)
 	}
