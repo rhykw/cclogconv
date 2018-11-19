@@ -1,0 +1,10 @@
+language: go
+go:
+  - 1.11.x
+  - master
+script:
+  - make ci
+cache:
+  directories:
+    - /go/pkg/mod/cache/download
+    - /go/src/github.com
