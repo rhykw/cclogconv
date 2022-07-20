@@ -7,10 +7,9 @@ REVISION = $(shell git describe --always)
 GO ?= CGO_ENABLED=0 GO111MODULE=on go
 
 default: build
-ci: depsdev test vet lint
+ci: depsdev test vet
 
 depsdev: ## Installing dependencies for development
-	$(GO) get golang.org/x/lint/golint
 	$(GO) get -u github.com/tcnksm/ghr
 
 build: ## Build as linux binary
@@ -33,10 +32,6 @@ test: test/tmp/GeoLite2-Country_20181113/GeoLite2-Country.mmdb test/tmp/test.log
 vet: ## Exec go vet
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Vetting$(RESET)"
 	$(GO) vet $(TEST)
-
-lint: ## Exec golint
-	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Linting$(RESET)"
-	golint -set_exit_status $(TEST)
 
 clean:
 	-rm -f cclogconv
