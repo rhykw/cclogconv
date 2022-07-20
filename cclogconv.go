@@ -14,7 +14,7 @@ import (
 
 const (
 	name    = "cclogconv"
-	version = "1.3.9"
+	version = "1.3.10"
 )
 
 // These are the exit code definitions.
@@ -93,7 +93,7 @@ func (f filter) start(mmdbFilePath string, selectCc string, nFlag bool, vFlag bo
 	defer db.Close()
 	// If you are using strings that may be invalid, check that ip is not nil
 
-	re, _ := regexp.Compile("^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
+	re, _ := regexp.Compile("^(.*[^0-9a-z\\.\\-_]|)((([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))$")
 
 	var sc = bufio.NewScanner(f.in)
 	for sc.Scan() {
@@ -101,8 +101,9 @@ func (f filter) start(mmdbFilePath string, selectCc string, nFlag bool, vFlag bo
 		lineBuf = ""
 		words := strings.Fields(sc.Text())
 		for _, word := range words {
-			if re.MatchString(word) {
-				ip := net.ParseIP(word)
+			m := re.FindStringSubmatch(word);
+			if len(m) > 2 {
+				ip := net.ParseIP(m[2])
 				record, err := db.City(ip)
 				if err != nil {
 					return err
@@ -115,7 +116,11 @@ func (f filter) start(mmdbFilePath string, selectCc string, nFlag bool, vFlag bo
 					cc = "-"
 				}
 				if nFlag == false {
-					lineBuf += fmt.Sprintf("%s ", cc)
+					if m[1] == "" {
+						lineBuf += fmt.Sprintf("%s ", cc)
+					} else {
+						lineBuf += fmt.Sprintf("CC%s%s ", m[1], cc)
+					}
 				}
 				lineBuf = lineBuf + fmt.Sprintf("%s ", word)
 			} else {
